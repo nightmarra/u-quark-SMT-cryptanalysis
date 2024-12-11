@@ -1,9 +1,9 @@
 # runtime configuration HERE #
 # input length in whole bytes
-INPUT_LENGTH = 2
-OUTPUT_STR = 'e9a79e7ae8a1861a69a4934d36da6aa8a1'
+INPUT_LENGTH = 1
+OUTPUT_STR = 'f6d9669964924b2db5d65965955451471c'
 ROUNDS_U = 2
-PARALLEL = True
+PARALLEL = False
 WRITE_MODEL_TO_FILE = True
 ##############################
 
@@ -141,7 +141,7 @@ print('Finished modelling.\n')
 
 if WRITE_MODEL_TO_FILE:
     with open('smtfile.smt2', '+w') as f:
-        f.write(s.sexpr())
+        f.write(s.to_smt2())
 
 print('Checking...')
 evaluation = s.check()

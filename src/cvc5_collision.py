@@ -1,10 +1,9 @@
 # runtime configuration HERE #
 # input length in whole bytes
-INPUT_LENGTH = 2
-OUTPUT_STR = 'bc78f0e1c2850a152a55aa54a952a44890'
+INPUT_LENGTH = 4
 ROUNDS_U = 1
-GET_INITIAL_STATES = True
 WRITE_MODEL_TO_FILE = False
+GET_INITIAL_STATES = True
 ##############################
 
 from time import time
@@ -18,8 +17,6 @@ DIGEST = WIDTH
 MAXDIGEST = 48
 
 INPUT_LENGTH *= 8
-print(f'- output: {OUTPUT_STR.upper()}')
-OUTPUT_STR = bytes.fromhex(OUTPUT_STR)
 
 
 def get_state(x):
@@ -39,13 +36,10 @@ def get_state(x):
 
 input1 = BitVec('input1', INPUT_LENGTH)
 input2 = BitVec('input2', INPUT_LENGTH)
-key1 = [BitVec(f'j{i}', 8) for i in range(8*WIDTH)]
-key2 = [BitVec(f'k{i}', 8) for i in range(8*WIDTH)]
+output = [BitVec(f'output{i}', 8) for i in range(DIGEST)]
 
-output = [None] * 8*WIDTH
-for i in range(8 * WIDTH):
-    output[i] = (OUTPUT_STR[int(i / 8)] >> (7-(i % 8))) & 1
-output = get_state(output)
+key1 = [BitVec(f'j{i}', 8) for i in range(8*WIDTH)]
+# key2 = [BitVec(f'k{i}', 8) for i in range(8*WIDTH)]
 
 
 def permute(x):
@@ -137,7 +131,7 @@ time_start = time()
 print('\nModelling...')
 s = Solver()
 s.add([process(key1, input1)[i] == output[i] for i in range(DIGEST)])
-s.add([process(key2, input2)[i] == output[i] for i in range(DIGEST)])
+s.add([process(key1, input2)[i] == output[i] for i in range(DIGEST)])
 s.add(input1 != input2)
 print('Finished modelling.\n')
 
@@ -163,11 +157,10 @@ if evaluation == sat:
     print(f'- input_2 = {input2_string}')
 
     if GET_INITIAL_STATES:
-        print('\nFetching initial states...')
         key1_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'j')]
         key1_output.sort()
-        key2_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'k')]
-        key2_output.sort()
+        # key2_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'k')]
+        # key2_output.sort()
 
         res = ''
         for tuple in key1_output:
@@ -179,15 +172,15 @@ if evaluation == sat:
             key1_str = temp
         print(f'- state_1 = {key1_str}')
     
-        res = ''
-        for tuple in key2_output:
-            res += str(tuple[1])
-        key2_str = str(hex(int(res, 2)))[2:].upper()
-        if len(key2_str) != 34:
-            temp = '0'
-            temp += key2_str
-            key2_str = temp
-        print(f'- state_2 = {key2_str}')
+        # res = ''
+        # for tuple in key2_output:
+        #     res += str(tuple[1])
+        # key2_str = str(hex(int(res, 2)))[2:].upper()
+        # if len(key2_str) != 34:
+        #     temp = '0'
+        #     temp += key2_str
+        #     key2_str = temp
+        # print(f'- state_2 = {key2_str}')
 
 time_end2 = time()-time_start
 print(f'\nSolving took {round(time_end1, 5)} seconds, total execution time was {round(time_end2, 5)} seconds.')
