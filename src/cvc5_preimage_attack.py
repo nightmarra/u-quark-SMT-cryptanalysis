@@ -1,7 +1,7 @@
 # runtime configuration HERE #
 # input length in whole bytes
 INPUT_LENGTH = 2
-OUTPUT_STR = 'e9a79e7ae8a1861a69a4934d36da6aa8a1'
+OUTPUT_STR = '5450410412492699679f7cf1c71c70c30d'
 ROUNDS_U = 2
 GET_INITIAL_STATE = True
 WRITE_MODEL_TO_FILE = False

@@ -1,5 +1,5 @@
 # runtime configuration HERE #
-PARALLEL = False
+PARALLEL = True
 ##############################
 
 from time import time
@@ -10,7 +10,6 @@ if PARALLEL:
     set_param('parallel.enable', True)
 
 
-time_start = time()
 print('\nModelling...')
 s = Solver()
 
@@ -22,6 +21,7 @@ except z3types.Z3Exception:
 
 print('Finished modelling.\n')
 print('Checking...')
+time_start = time()
 evaluation = s.check()
 print(('SATISFIABLE' if evaluation == sat else 'UNSATISFIABLE'))
 time_end1 = time()-time_start

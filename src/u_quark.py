@@ -1,8 +1,9 @@
 # runtime configuration HERE #
 # input length allowed only in whole bytes
-INPUT = 'FDAC036421A1B99C'
-KEY = 'F022037C00583981159000411800100811'
-ROUNDS_U = 4
+INPUT = 'FFFFFFFFFFFFFFFFFFFF'
+KEY = 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
+
+ROUNDS_U = 1
 ##############################
 
 CAPACITY = 16
