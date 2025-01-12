@@ -1,14 +1,14 @@
 # runtime configuration HERE #
 # input length in whole bytes
 INPUT_LENGTH = 2
-OUTPUT_STR = '70c10618618411471c70c30f3cf0c1071c'
-ROUNDS_U = 2
-GET_INITIAL_STATE = False
+ROUNDS_U = 5
+PARALLEL = False
 WRITE_MODEL_TO_FILE = False
+GET_INITIAL_STATES = True
 ##############################
 
 from time import time
-from cvc5.pythonic import *
+from z3 import *
 
 
 CAPACITY = 16
@@ -17,9 +17,9 @@ WIDTH = 17
 DIGEST = WIDTH
 MAXDIGEST = 48
 
+if PARALLEL:
+    set_param('parallel.enable', True)
 INPUT_LENGTH *= 8
-print(f'- output: {OUTPUT_STR.upper()}')
-OUTPUT_STR = bytes.fromhex(OUTPUT_STR)
 
 
 def get_state(x):
@@ -36,15 +36,19 @@ def get_state(x):
     res = list(bytes.fromhex(string))
     return res
 
+input1 = BitVec('input1', INPUT_LENGTH)
+input2 = BitVec('input2', INPUT_LENGTH)
+output = [BitVec(f'output{i}', 8) for i in range(DIGEST)]
 
-input = BitVec('input', INPUT_LENGTH)
-key = [BitVec(f'i{i}', 8) for i in range(8*WIDTH)]
-
-output = [None] * 8*WIDTH
-for i in range(8 * WIDTH):
-    output[i] = (OUTPUT_STR[int(i / 8)] >> (7-(i % 8))) & 1
-output = get_state(output)
-
+key1 = [1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1,
+         1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
+           0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+             0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+               1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+                 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1,
+                   1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1,
+                    0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1]
+# corresponds to D8DACA44414A099719C80AA3AF065644DB from the original implementation
 
 def permute(x):
     N_LEN_U = 68
@@ -134,7 +138,9 @@ def process(x, input):
 time_start = time()
 print('\nModelling...')
 s = Solver()
-s.add([process(key, input)[i] == output[i] for i in range(DIGEST)])
+s.add([process(key1, input1)[i] == output[i] for i in range(DIGEST)])
+s.add([process(key1, input2)[i] == output[i] for i in range(DIGEST)])
+s.add(input1 != input2)
 print('Finished modelling.\n')
 
 if WRITE_MODEL_TO_FILE:
@@ -149,21 +155,18 @@ time_end1 = time()-time_start
 
 if evaluation == sat:
     m = s.model()
-    print(f'- input = {str(hex(int(str(m[input])))).upper()[2:]}')
+    input1_string = str(hex(int(str(m[input1])))).upper()[2:]
+    if len(input1_string) % 2 != 0:
+        input1_string = '0' + input1_string
+    input2_string = str(hex(int(str(m[input2])))).upper()[2:]
+    if len(input2_string) % 2 != 0:
+        input2_string = '0' + input2_string
+    print(f'- input_1 = {input1_string}')
+    print(f'- input_2 = {input2_string}')
 
-    if GET_INITIAL_STATE:
-        print('\nFetching initial state...')
-        m_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if str(d) != 'input']
-        m_output.sort()
-        res = ''
-        for tuple in m_output:
-            res += str(tuple[1])
-        key_str = str(hex(int(res, 2)))[2:].upper()
-        if len(key_str) != 34:
-            temp = '0'
-            temp += key_str
-            key_str = temp
-        print(f'- state = {key_str}')
+    if GET_INITIAL_STATES:
+        key1_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'j')]
+        key1_output.sort()
 
 
 time_end2 = time()-time_start

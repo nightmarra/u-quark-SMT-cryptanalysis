@@ -1,9 +1,9 @@
 # runtime configuration HERE #
 # input length in whole bytes
-INPUT_LENGTH = 1
-OUTPUT_STR = 'f6d9669964924b2db5d65965955451471c'
+INPUT_LENGTH = 2
+OUTPUT_STR = '70c10618618411471c70c30f3cf0c1071c'
 ROUNDS_U = 2
-PARALLEL = False
+PARALLEL = True
 WRITE_MODEL_TO_FILE = True
 ##############################
 

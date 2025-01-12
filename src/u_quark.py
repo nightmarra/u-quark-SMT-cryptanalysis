@@ -1,9 +1,9 @@
 # runtime configuration HERE #
 # input length allowed only in whole bytes
-INPUT = 'FFFFFFFFFFFFFFFFFFFF'
-KEY = 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
 
-ROUNDS_U = 1
+INPUT = '38D3'
+KEY = 'D8DACA44414A099719C80AA3AF065644DB'
+ROUNDS_U = 2
 ##############################
 
 CAPACITY = 16
@@ -28,9 +28,6 @@ def convert_output_to_iv(key: str):
             iv.append((int(hex_char, 16)))
             hex_char = ''
 convert_output_to_iv(KEY)
-
-# initial state used in original u-Quark implementation
-# iv = [0xd8,0xda,0xca,0x44,0x41,0x4a,0x09,0x97,0x19,0xc8,0x0a,0xa3,0xaf,0x06,0x56,0x44,0xdb]
 
 
 def show_state(x: list):
