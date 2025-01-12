@@ -159,8 +159,6 @@ if evaluation == sat:
     if GET_INITIAL_STATES:
         key1_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'j')]
         key1_output.sort()
-        # key2_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'k')]
-        # key2_output.sort()
 
         res = ''
         for tuple in key1_output:
@@ -171,16 +169,7 @@ if evaluation == sat:
             temp += key1_str
             key1_str = temp
         print(f'- state_1 = {key1_str}')
-    
-        # res = ''
-        # for tuple in key2_output:
-        #     res += str(tuple[1])
-        # key2_str = str(hex(int(res, 2)))[2:].upper()
-        # if len(key2_str) != 34:
-        #     temp = '0'
-        #     temp += key2_str
-        #     key2_str = temp
-        # print(f'- state_2 = {key2_str}')
+
 
 time_end2 = time()-time_start
 print(f'\nSolving took {round(time_end1, 5)} seconds, total execution time was {round(time_end2, 5)} seconds.')

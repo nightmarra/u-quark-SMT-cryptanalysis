@@ -3,7 +3,6 @@
 INPUT_LENGTH = 64
 OUTPUT_STR = '848ee5bfe92365fdb812612365b12256d5'
 ROUNDS_U = 5
-GET_INITIAL_STATE = False
 WRITE_MODEL_TO_FILE = False
 ##############################
 

@@ -58,5 +58,6 @@ if evaluation == sat:
         key_str = temp
     print(f'- state_2 = {key_str}')
 
+
 time_end2 = time()-time_start
 print(f'\nSolving took {round(time_end1, 5)} seconds, total execution time was {round(time_end2, 5)} seconds.')

@@ -3,7 +3,6 @@
 INPUT_LENGTH = 50
 ROUNDS_U = 1
 WRITE_MODEL_TO_FILE = False
-GET_INITIAL_STATES = False
 ##############################
 
 from time import time
@@ -38,7 +37,6 @@ input1 = BitVec('input1', INPUT_LENGTH)
 input2 = BitVec('input2', INPUT_LENGTH)
 output = [BitVec(f'output{i}', 8) for i in range(DIGEST)]
 
-# key1 = [BitVec(f'j{i}', 8) for i in range(8*WIDTH)]
 key1 = [1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1,
          1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
            0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0,
@@ -164,31 +162,6 @@ if evaluation == sat:
     print(f'- input_1 = {input1_string}')
     print(f'- input_2 = {input2_string}')
 
-    if GET_INITIAL_STATES:
-        key1_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'j')]
-        key1_output.sort()
-        # key2_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if (str(d)[0] == 'k')]
-        # key2_output.sort()
-
-        # res = ''
-        # for tuple in key1_output:
-        #     res += str(tuple[1])
-        # key1_str = str(hex(int(res, 2)))[2:].upper()
-        # if len(key1_str) != 34:
-        #     temp = '0'
-        #     temp += key1_str
-        #     key1_str = temp
-        # print(f'- state_1 = {key1_str}')
-    
-        # res = ''
-        # for tuple in key2_output:
-        #     res += str(tuple[1])
-        # key2_str = str(hex(int(res, 2)))[2:].upper()
-        # if len(key2_str) != 34:
-        #     temp = '0'
-        #     temp += key2_str
-        #     key2_str = temp
-        # print(f'- state_2 = {key2_str}')
 
 time_end2 = time()-time_start
 print(f'\nSolving took {round(time_end1, 5)} seconds, total execution time was {round(time_end2, 5)} seconds.')
