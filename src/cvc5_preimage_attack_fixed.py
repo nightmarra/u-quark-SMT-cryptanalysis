@@ -1,8 +1,8 @@
 # runtime configuration HERE #
 # input length in whole bytes
-INPUT_LENGTH = 2
-OUTPUT_STR = '70c10618618411471c70c30f3cf0c1071c'
-ROUNDS_U = 2
+INPUT_LENGTH = 64
+OUTPUT_STR = '848ee5bfe92365fdb812612365b12256d5'
+ROUNDS_U = 5
 GET_INITIAL_STATE = False
 WRITE_MODEL_TO_FILE = False
 ##############################
@@ -38,7 +38,14 @@ def get_state(x):
 
 
 input = BitVec('input', INPUT_LENGTH)
-key = [BitVec(f'i{i}', 8) for i in range(8*WIDTH)]
+key = [1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1,
+         1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1,
+           0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0,
+             0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1,
+               1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+                 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 1,
+                   1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1,
+                    0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1]
 
 output = [None] * 8*WIDTH
 for i in range(8 * WIDTH):
@@ -150,20 +157,6 @@ time_end1 = time()-time_start
 if evaluation == sat:
     m = s.model()
     print(f'- input = {str(hex(int(str(m[input])))).upper()[2:]}')
-
-    if GET_INITIAL_STATE:
-        print('\nFetching initial state...')
-        m_output = [(int(str(d)[1:]), int(str(m[d]))) for d in m if str(d) != 'input']
-        m_output.sort()
-        res = ''
-        for tuple in m_output:
-            res += str(tuple[1])
-        key_str = str(hex(int(res, 2)))[2:].upper()
-        if len(key_str) != 34:
-            temp = '0'
-            temp += key_str
-            key_str = temp
-        print(f'- state = {key_str}')
 
 
 time_end2 = time()-time_start
